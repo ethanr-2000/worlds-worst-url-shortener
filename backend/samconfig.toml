@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "url-shortener"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1dwnkw1kd3mx"
+s3_prefix = "url-shortener"
+region = "eu-west-2"
+capabilities = "CAPABILITY_IAM"

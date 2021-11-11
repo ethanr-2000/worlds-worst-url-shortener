@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: UrlShortener
+
+Parameters:
+  TableName:
+    Type: String
+    Default: ShortUrlTable
+
+Resources:
+  urlTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: shortUrl
+        Type: String
+      TableName: !Ref TableName
+
+  urlRegisterer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: url-registerer/index.handler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: '/registerUrl'
+            Method: post
+      Environment:
+        Variables:
+          TableName: !Ref TableName
+
+  urlDeleter:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: url-deleter/index.handler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: '/deleteUrl'
+            Method: post
+      Environment:
+        Variables:
+          TableName: !Ref TableName
+
+  urlRetriever:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: url-retriever/index.handler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: '/getUrl'
+            Method: post
+      Environment:
+        Variables:
+          TableName: !Ref TableName
+
+  urlRetrieverAll:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: url-retriever-all/index.handler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: '/getAll'
+            Method: get
+      Environment:
+        Variables:
+          TableName: !Ref TableName
+
+#  corsRegisterer:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: cors/cors.handler
+#      Runtime: nodejs14.x
+#      Events:
+#        HttpPost:
+#          Type: Api
+#          Properties:
+#            Path: '/registerUrl'
+#            Method: options
+#
+#  corsDeleter:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: cors/cors.handler
+#      Runtime: nodejs14.x
+#      Events:
+#        HttpPost:
+#          Type: Api
+#          Properties:
+#            Path: '/deleteUrl'
+#            Method: options
+#
+#  corsUrlRetriever:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: cors/cors.handler
+#      Runtime: nodejs14.x
+#      Events:
+#        HttpPost:
+#          Type: Api
+#          Properties:
+#            Path: '/getUrl'
+#            Method: options
+#
+#  corsUrlRetrieverAll:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: cors/cors.handler
+#      Runtime: nodejs14.x
+#      Events:
+#        HttpPost:
+#          Type: Api
+#          Properties:
+#            Path: '/getAll'
+#            Method: options
